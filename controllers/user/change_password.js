@@ -8,7 +8,7 @@ const changePassword = function(req, res){
         if (req.body.new_password !== req.body.confirm_password) {
             throw new Error("New password does not mathed with confirm password")
         }
-        UserModel.findOne({ _id: req.id, email: req.email})
+        UserModel.findOne({ _id: req.id, email: req.email, isDeleted: false})
         .exec()
         .then((result)=>{
             userObj = result

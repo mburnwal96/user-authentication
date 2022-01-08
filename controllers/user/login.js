@@ -3,7 +3,7 @@ const UserModel = require('../../models/user')
 var jwt = require('jsonwebtoken');
 
 const userLogin = function(req, res){
-    UserModel.findOne({email:req.body.email})
+    UserModel.findOne({email:req.body.email, isDeleted: false})
     .exec()
     .then((result)=>{
         if (!result) {

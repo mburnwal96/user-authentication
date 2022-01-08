@@ -9,7 +9,7 @@ const forgotPassword = function(req, res){
             throw new Error("Please enter valid email id.")
         }
         // validate email if given email is present or not in db
-        UserModel.findOne({ email: req.body.email })
+        UserModel.findOne({ email: req.body.email, isDeleted: false })
         .exec()
         .then((result)=>{
             // generate reset_password token to send in email to reset password
@@ -19,10 +19,9 @@ const forgotPassword = function(req, res){
             if (!result) {
                 throw new Error("Please enter your valid old password")
             }
-            return bcrypt.hash(req.body.new_password.toString(), 10) //req.body.new_password
+            return bcrypt.hash(req.body.new_password.toString(), 10)
         })
         .then((hashedPwd) =>{
-            console.log(hashedPwd)
             if (hashedPwd) {
                 userObj.password = hashedPwd
                 userObj.save()
@@ -30,12 +29,15 @@ const forgotPassword = function(req, res){
                     message: "Password changed Successfully..."
                 })
             }
+            throw new Error("Unable to process your request please try again")
         })
         .catch((err)=>{
-
+            return res.status(401).json({
+                message: err.message
+            })
         })
     } catch (error) {
-        res.status(401).json({
+        return res.status(401).json({
             message: error.message
         })
     }    
